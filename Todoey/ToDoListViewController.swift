@@ -10,10 +10,23 @@ import UIKit
 
 class ToDoListViewController: UITableViewController {
 
-    var itemArray = [String]()
+    var itemArray = [Item]()
     let defaults = UserDefaults.standard
+    var dataFilePath: URL?
     override func viewDidLoad() {
         super.viewDidLoad()
+
+         dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+        print(dataFilePath)
+        
+        
+        
+        itemArray.append(Item(title: "item"))
+        itemArray.append(Item(title: "item"))
+        itemArray.append(Item(title: "item"))
+        itemArray.append(Item(title: "item"))
+        itemArray.append(Item(title: "item"))
+        itemArray.append(Item(title: "item"))
         
         //MARK: - code for nav bar color
         let appearance = UINavigationBarAppearance()
@@ -28,8 +41,7 @@ class ToDoListViewController: UITableViewController {
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
         tableView.dataSource = self
         
-        guard let items = defaults.array(forKey: "ToDoList") as? [String] else {return}
-        itemArray = items
+        loadData()
         
       
         
@@ -42,23 +54,28 @@ class ToDoListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return itemArray.count
     }
+    
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell")
-        cell?.textLabel?.text = itemArray[indexPath.row]
+        let item = itemArray[indexPath.row]
+        
+        cell?.textLabel?.text = item.title
+        
+        cell?.accessoryType = item.isSelected ? .checkmark : .none
+        
+        
+        
+        
         return cell!
         
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print(itemArray[indexPath.row])
-       
-        
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark{
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        }
-        else{
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
+        itemArray[indexPath.row].isSelected = !itemArray[indexPath.row].isSelected
+        saveData()
+        tableView.reloadData()
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
@@ -78,9 +95,11 @@ class ToDoListViewController: UITableViewController {
         
         alert.addAction(UIAlertAction(title: "Add", style: .default) { _ in
             guard !textField.text!.isEmpty else {return}
-            let text = textField.text!
-            self.itemArray.append(text)
-            self.defaults.set(self.itemArray, forKey: "ToDoList")
+            let item = Item(title: textField.text!)
+            self.itemArray.append(item)
+            //Saving data
+            self.saveData()
+            
             self.tableView.reloadData()
           
             
@@ -89,5 +108,38 @@ class ToDoListViewController: UITableViewController {
         present(alert, animated: true)
             
 }
+    
+    
+    //MARK: - Model Manipulation Methods
+    
+    func saveData(){
+        let encoder = PropertyListEncoder()
+        do{
+            let data = try encoder.encode(itemArray)
+            try data.write(to: dataFilePath!)
+        }
+        catch{
+            print(error.localizedDescription)
+        }
+       
+        
+        self.tableView.reloadData()
+      
+    }
+    
+    func loadData(){
+        do{
+            guard let data = try? Data(contentsOf: dataFilePath!) else {return}
+            let decoder = PropertyListDecoder()
+            let decodedData = try decoder.decode([Item].self, from: data)
+            itemArray = decodedData
+        }
+        catch{
+            print(error.localizedDescription)
+        }
+      
+       
+        
+    }
 }
 
