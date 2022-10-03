@@ -7,27 +7,17 @@
 //
 
 import UIKit
+import CoreData
 
 class ToDoListViewController: UITableViewController {
-
+    
     var itemArray = [Item]()
     let defaults = UserDefaults.standard
-    var dataFilePath: URL?
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     override func viewDidLoad() {
         super.viewDidLoad()
-
-         dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
-        print(dataFilePath)
         
-        
-        
-        itemArray.append(Item(title: "item"))
-        itemArray.append(Item(title: "item"))
-        itemArray.append(Item(title: "item"))
-        itemArray.append(Item(title: "item"))
-        itemArray.append(Item(title: "item"))
-        itemArray.append(Item(title: "item"))
-        
+        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         //MARK: - code for nav bar color
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
@@ -43,13 +33,13 @@ class ToDoListViewController: UITableViewController {
         
         loadData()
         
-      
+        
         
         
     }
     
     
-  
+    
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return itemArray.count
@@ -60,7 +50,7 @@ class ToDoListViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell")
         let item = itemArray[indexPath.row]
         
-        cell?.textLabel?.text = item.title
+        cell?.textLabel!.text = item.title
         
         cell?.accessoryType = item.isSelected ? .checkmark : .none
         
@@ -70,15 +60,15 @@ class ToDoListViewController: UITableViewController {
         return cell!
         
     }
-
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print(itemArray[indexPath.row])
+        
         itemArray[indexPath.row].isSelected = !itemArray[indexPath.row].isSelected
         saveData()
-        tableView.reloadData()
         tableView.deselectRow(at: indexPath, animated: true)
     }
-
+    
     
     
     //MARK: - Add new items
@@ -95,51 +85,46 @@ class ToDoListViewController: UITableViewController {
         
         alert.addAction(UIAlertAction(title: "Add", style: .default) { _ in
             guard !textField.text!.isEmpty else {return}
-            let item = Item(title: textField.text!)
+            
+            let item = Item(context: self.context)
+            item.title = textField.text!
+            item.isSelected = false
             self.itemArray.append(item)
             //Saving data
             self.saveData()
             
             self.tableView.reloadData()
-          
+            
             
         })
         
         present(alert, animated: true)
-            
-}
+        
+    }
     
     
     //MARK: - Model Manipulation Methods
     
     func saveData(){
-        let encoder = PropertyListEncoder()
         do{
-            let data = try encoder.encode(itemArray)
-            try data.write(to: dataFilePath!)
-        }
-        catch{
+            try context.save()
+        }catch{
             print(error.localizedDescription)
         }
-       
         
         self.tableView.reloadData()
-      
+        
     }
     
     func loadData(){
         do{
-            guard let data = try? Data(contentsOf: dataFilePath!) else {return}
-            let decoder = PropertyListDecoder()
-            let decodedData = try decoder.decode([Item].self, from: data)
-            itemArray = decodedData
-        }
-        catch{
+           let request: NSFetchRequest<Item> = Item.fetchRequest()
+           itemArray = try context.fetch(request)
+        } catch{
             print(error.localizedDescription)
         }
-      
-       
+        
         
     }
+    
 }
-
