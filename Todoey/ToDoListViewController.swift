@@ -86,10 +86,10 @@ class ToDoListViewController: UITableViewController {
         alert.addAction(UIAlertAction(title: "Add", style: .default) { _ in
             guard !textField.text!.isEmpty else {return}
             
-            let item = Item(context: self.context)
-            item.title = textField.text!
-            item.isSelected = false
-            self.itemArray.append(item)
+            let newItem = Item(context: self.context)
+            newItem.title = textField.text!
+            newItem.isSelected = false
+            self.itemArray.append(newItem)
             //Saving data
             self.saveData()
             
@@ -111,8 +111,10 @@ class ToDoListViewController: UITableViewController {
         }catch{
             print(error.localizedDescription)
         }
-        
-        self.tableView.reloadData()
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+       
         
     }
     
@@ -120,6 +122,9 @@ class ToDoListViewController: UITableViewController {
         do{
            let request: NSFetchRequest<Item> = Item.fetchRequest()
            itemArray = try context.fetch(request)
+           DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
         } catch{
             print(error.localizedDescription)
         }
