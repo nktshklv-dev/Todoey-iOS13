@@ -9,15 +9,17 @@
 import UIKit
 import CoreData
 
-class ToDoListViewController: UITableViewController {
+class ToDoListViewController: UITableViewController{
     
     var itemArray = [Item]()
-    let defaults = UserDefaults.standard
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
+    
+    @IBOutlet var searchBar: UISearchBar?
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+        searchBar?.delegate = self
         //MARK: - code for nav bar color
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
@@ -97,17 +99,23 @@ class ToDoListViewController: UITableViewController {
             
             
         })
-        
+
         present(alert, animated: true)
         
     }
     
+   
     
-    //MARK: - Model Manipulation Methods
+}
+
+//MARK: - CoreData Manipulation Methods
+extension ToDoListViewController{
+    
     
     func saveData(){
         do{
             try context.save()
+            loadData()
         }catch{
             print(error.localizedDescription)
         }
@@ -118,9 +126,8 @@ class ToDoListViewController: UITableViewController {
         
     }
     
-    func loadData(){
+    func loadData(with request: NSFetchRequest<Item> = Item.fetchRequest()){
         do{
-           let request: NSFetchRequest<Item> = Item.fetchRequest()
            itemArray = try context.fetch(request)
            DispatchQueue.main.async {
                 self.tableView.reloadData()
@@ -131,5 +138,27 @@ class ToDoListViewController: UITableViewController {
         
         
     }
-    
 }
+
+
+//MARK: - UISearchBarDelegate
+extension ToDoListViewController: UISearchBarDelegate{
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let request: NSFetchRequest<Item> = Item.fetchRequest()
+        
+        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+    
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        
+        loadData(with: request)
+        
+    }
+}
+
+
+
+
+
+
+
+
