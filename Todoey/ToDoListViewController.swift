@@ -20,6 +20,7 @@ class ToDoListViewController: UITableViewController{
         super.viewDidLoad()
         
         searchBar?.delegate = self
+        
         //MARK: - code for nav bar color
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
@@ -147,7 +148,7 @@ extension ToDoListViewController: UISearchBarDelegate{
         let request: NSFetchRequest<Item> = Item.fetchRequest()
         
         request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
-    
+        
         request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
         
         loadData(with: request)
