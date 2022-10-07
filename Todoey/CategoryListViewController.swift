@@ -11,7 +11,8 @@ import CoreData
 
 class CategoryListViewController: UITableViewController {
     
-      let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    @IBOutlet var searchBar: UISearchBar!
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var categories = [Category]()
 
     override func viewDidLoad() {
@@ -105,4 +106,9 @@ extension CategoryListViewController{
             print(error.localizedDescription)
         }
     }
+}
+
+
+extension CategoryListViewController: UISearchBarDelegate{
+    
 }
