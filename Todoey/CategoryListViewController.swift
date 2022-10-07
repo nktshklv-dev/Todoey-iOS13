@@ -77,6 +77,7 @@ class CategoryListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath , animated: true)
+        searchBar.resignFirstResponder()
     }
     
 
@@ -95,9 +96,9 @@ extension CategoryListViewController{
         }
     }
     
-    func fetchData(){
+    func fetchData(with request: NSFetchRequest<Category> = Category.fetchRequest()){
         do{
-            let request: NSFetchRequest<Category> = Category.fetchRequest()
+            
             categories = try context.fetch(request)
             DispatchQueue.main.async {
                 self.tableView.reloadData()
@@ -110,5 +111,19 @@ extension CategoryListViewController{
 
 
 extension CategoryListViewController: UISearchBarDelegate{
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        
+        let request: NSFetchRequest<Category> = Category.fetchRequest()
+        
+        request.predicate = NSPredicate(format: "name CONTAINS %@", searchBar.text!)
+        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        fetchData(with: request)
+    }
     
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.count == 0{
+            fetchData()
+            searchBar.resignFirstResponder()
+        }
+    }
 }

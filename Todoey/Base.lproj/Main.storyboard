@@ -91,9 +91,17 @@
                         <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <searchBar key="tableHeaderView" contentMode="redraw" id="93X-tA-7bn">
+                            <rect key="frame" x="0.0" y="0.0" width="390" height="44"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                            <textInputTraits key="textInputTraits"/>
+                            <connections>
+                                <outlet property="delegate" destination="kBT-Jw-mp3" id="nWK-Uv-aYV"/>
+                            </connections>
+                        </searchBar>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="categoryCell" textLabel="DiV-7z-0OB" style="IBUITableViewCellStyleDefault" id="xlP-XQ-tjM">
-                                <rect key="frame" x="0.0" y="50" width="390" height="43.666667938232422"/>
+                                <rect key="frame" x="0.0" y="94" width="390" height="43.666667938232422"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="xlP-XQ-tjM" id="IfM-6L-DDW">
                                     <rect key="frame" x="0.0" y="0.0" width="390" height="43.666667938232422"/>
@@ -123,6 +131,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="searchBar" destination="93X-tA-7bn" id="7TR-mA-ob6"/>
                         <segue destination="xyf-9Y-9HF" kind="show" identifier="fromCategoriesToTasks" id="gkw-dZ-wBY"/>
                     </connections>
                 </tableViewController>
