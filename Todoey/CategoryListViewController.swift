@@ -28,6 +28,7 @@ class CategoryListViewController: UITableViewController {
         navigationController?.navigationBar.tintColor = .white
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        
         fetchData()
 
      
