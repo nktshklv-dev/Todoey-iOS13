@@ -132,7 +132,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="searchBar" destination="93X-tA-7bn" id="7TR-mA-ob6"/>
-                        <segue destination="xyf-9Y-9HF" kind="show" identifier="fromCategoriesToTasks" id="gkw-dZ-wBY"/>
+                        <segue destination="xyf-9Y-9HF" kind="show" identifier="goToItems" id="gkw-dZ-wBY"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dLq-CD-CK1" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
