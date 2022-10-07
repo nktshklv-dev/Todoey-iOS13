@@ -94,8 +94,9 @@ extension CategoryListViewController{
         }
     }
     
-    func fetchData(with request: NSFetchRequest<Category> = Category.fetchRequest()){
+    func fetchData(){
         do{
+            let request: NSFetchRequest<Category> = Category.fetchRequest()
             categories = try context.fetch(request)
             DispatchQueue.main.async {
                 self.tableView.reloadData()
