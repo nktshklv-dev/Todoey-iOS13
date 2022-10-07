@@ -56,10 +56,6 @@ class ToDoListViewController: UITableViewController{
         cell?.textLabel!.text = item.title
         
         cell?.accessoryType = item.isSelected ? .checkmark : .none
-        
-        
-        
-        
         return cell!
         
     }
@@ -144,6 +140,8 @@ extension ToDoListViewController{
 
 //MARK: - UISearchBarDelegate
 extension ToDoListViewController: UISearchBarDelegate{
+    
+    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         let request: NSFetchRequest<Item> = Item.fetchRequest()
         
@@ -152,7 +150,17 @@ extension ToDoListViewController: UISearchBarDelegate{
         request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
         
         loadData(with: request)
-        
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.count == 0{
+            loadData()
+            DispatchQueue.main.async {
+                self.searchBar!.resignFirstResponder()
+            }
+          
+        }
+
     }
 }
 
